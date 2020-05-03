@@ -1,58 +1,40 @@
 // https://leetcode.com/problems/rotate-list/
+// https://leetcode.com/explore/learn/card/linked-list/214/two-pointer-technique/1296/
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
     /*
-		clarifying questions & edge cases:
-            empty list
-            k equals zero
-            k equals len
-		test: 
-		
-		algorithm:
-            calculate length of list
-            k = k % len
-            go forward len-k steps
-            make next node head of list, tie tail to head and cut the list at len-k
-		
-        n: node count
-		time complexity: O(n)
-		space complexity: O(1)
-	*/
+        n: num of nodes
+        time: O(n)
+        space: O(1)
+    */
     public ListNode rotateRight(ListNode head, int k) {
-        if(head == null || head.next == null || k == 0) return head;
+        if(head == null || head.next == null) return head;
+        int count = 1;
+        ListNode curr = head;
+        while(curr != null && curr.next != null) {
+            count++;
+            curr = curr.next;
+        }
+        curr.next = head;
         
-        int len = calcLen(head);
-        k = k % len;
+        k %= count;
+        int diff = count - k -1;
         
-        if(k == 0) return head;
-        
-        ListNode current = head;
-        int forwardSteps = len - k - 1;
-        while(forwardSteps-- > 0) current = current.next;
-        
-        ListNode newHead = current.next;
-        current.next = null;
-        
-        current = newHead;
-        while(current.next != null) current = current.next;
-        current.next = head;
+        curr = head;
+        while(diff-- > 0) curr = curr.next;
+        ListNode newHead = curr.next;
+        curr.next = null;
         
         return newHead;
-    }
-    
-    private int calcLen(ListNode head) {
-        int len = 0;
-        while(head != null) {
-            head = head.next;
-            len++;
-        }
-        return len;
     }
 }
