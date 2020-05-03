@@ -1,49 +1,46 @@
 // https://leetcode.com/problems/reverse-linked-list/
+// https://leetcode.com/explore/learn/card/linked-list/214/two-pointer-technique/1296/
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-    /*
-		clarifying questions & edge cases:
-            null case
-            one node case
-		test: 
-		    1->2->3->4->5->NULL
-            
-		algorithm:
-            approach #1: iterative -- iterate through the list, move to head of list
-            approach #2: recursive
-		
-        n: node count
-		time complexity: O(n)
-		space complexity: O(1) - iterative, O(n) - recursion stack
-	*/
-	
     public ListNode reverseList(ListNode head) {
-        return reverseListIterative(head);
+        // return reverseRec(head);
+        return reverseIter(head);
     }
     
-    private ListNode reverseListIterative(ListNode head) {
-        ListNode dummy = new ListNode(-1);
-        dummy.next = head;
+    private ListNode reverseIter(ListNode node) {
+        if(node == null || node.next == null) return node;
         
-        ListNode current = head;
-        while(current != null && current.next != null) {
-            ListNode moveToFront = current.next;
-            current.next = current.next.next;
-            moveToFront.next = dummy.next;
-            dummy.next = moveToFront;
+        ListNode prev = null, curr = node;
+        while(curr != null) {
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
         }
         
-        return dummy.next;
+        return prev;
     }
     
-    private ListNode reverseListRecursive(ListNode head)  {
+    private ListNode reverseRec(ListNode node) {
+        if(node == null || node.next == null) return node;
         
+        ListNode restReversed = reverseRec(node.next);
+        
+        ListNode curr = restReversed;
+        while(curr != null && curr.next != null) curr = curr.next;
+        curr.next = node;
+        node.next = null;
+        
+        return restReversed;
     }
 }
