@@ -1,103 +1,76 @@
 // https://leetcode.com/problems/design-linked-list/
+// https://leetcode.com/explore/learn/card/linked-list/209/singly-linked-list/1290/
+
 class MyLinkedList {
     class Node {
         public int val;
         public Node next;
+        
         public Node(int val) {
             this.val = val;
         }
     }
     
-    private Node head;
+    Node head;
+    int count;
 
     /** Initialize your data structure here. */
     public MyLinkedList() {
-        head = new Node(-1);
+        
     }
     
     /** Get the value of the index-th node in the linked list. If the index is invalid, return -1. */
     public int get(int index) {
-        Node current = this.head.next;
+        if(index < 0 || index >= count) return -1;
+        
+        Node curr = head;
         while(index-- > 0) {
-            if(current == null) return -1;
-            current = current.next;
+            curr = curr.next;
         }
-        return current == null ? -1 : current.val;
+        
+        return curr.val;
     }
     
     /** Add a node of value val before the first element of the linked list. After the insertion, the new node will be the first node of the linked list. */
     public void addAtHead(int val) {
-        Node newNode = new Node(val);
-        newNode.next = this.head.next;
-        this.head.next = newNode;
-        this.debug("addAtHead");
+        addAtIndex(0, val);
     }
     
     /** Append a node of value val to the last element of the linked list. */
     public void addAtTail(int val) {
-        if(this.head.next == null) {
-            addAtHead(val);
-            return;
-        }
-        
-        Node newNode = new Node(val);
-        
-        Node current = this.head.next;
-        while(current.next != null) current = current.next;
-        
-        if(current != null) current.next = newNode;
-        this.debug("addAtTail");
+        addAtIndex(count, val);
     }
     
     /** Add a node of value val before the index-th node in the linked list. If index equals to the length of linked list, the node will be appended to the end of linked list. If index is greater than the length, the node will not be inserted. */
     public void addAtIndex(int index, int val) {
-        if(index == 0) {
-            addAtHead(val);
-            return;
-        }
+        if(index < 0 || index > count) return;
         
-        Node newNode = new Node(val);
+        Node node = new Node(val);
+        Node dummy = new Node(-1);
+        dummy.next = head;
+        Node curr = dummy;
+        while(index-->0) 
+            curr = curr.next;
         
-        Node current = this.head.next;
-        while(--index > 0) {
-            if(current == null) return;
-            current = current.next;
-        }
-        
-        if(current != null) {
-            newNode.next = current.next;
-            current.next = newNode;
-        }
-        
-        this.debug("addAtIndex");
+        node.next = curr.next;
+        curr.next = node;
+        head = dummy.next;
+        count++;
     }
     
     /** Delete the index-th node in the linked list, if the index is valid. */
     public void deleteAtIndex(int index) {
-        if(index == 0) {
-            this.head.next = this.head.next.next;
-            return;
-        }
+        if(index < 0 || index >= count) return;
         
-        Node current = this.head.next;
-        while(--index > 0) {
-            if(current == null) return;
-            current = current.next;
-        }
+        Node dummy = new Node(-1);
+        dummy.next = head;
+        Node curr = dummy;
+        while(index-->0)
+            curr = curr.next;
         
-        if(current != null && current.next != null) current.next = current.next.next;
-        this.debug("deleteAtIndex");
-    }
-    
-    private void debug(String method) {
-        StringBuilder list = new StringBuilder();
-        list.append(method).append(": ");
-        Node current = this.head.next;
-        while(current != null) {
-            list.append(current.val).append(" -> ");
-            current = current.next;
-        }
-        // System.out.println(list.toString());
+        curr.next = curr.next.next;
+        head = dummy.next;
+        count--;
     }
 }
 
