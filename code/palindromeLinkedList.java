@@ -1,39 +1,39 @@
 // https://leetcode.com/problems/palindrome-linked-list/
+// https://leetcode.com/explore/learn/card/linked-list/214/two-pointer-technique/1296/
+
 /**
  * Definition for singly-linked list.
  * public class ListNode {
  *     int val;
  *     ListNode next;
- *     ListNode(int x) { val = x; }
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
 class Solution {
-	/*
-		clarifying questions & edge cases:
-		test: 
-            1->2->2->1
-		
-		algorithm:
-            calculate length of array
-            reverse the second half and compare
-            (if odd length -- ignore the extra node)
-		
-        n: node count
-		time complexity: O(n)
-		space complexity: O(1)
-	*/
+    /*
+        n: num of nodes
+        time: O(n)
+        space: O(1)
+    */
     public boolean isPalindrome(ListNode head) {
-        int len = calcLen(head);
-        int forwardStepCount = len % 2 == 0 ? (len / 2) : (len / 2 + 1);
+        if(head == null || head.next == null) return true;
         
-        ListNode secondHalf = head;
-        while(forwardStepCount-- > 0) secondHalf = secondHalf.next;
-        secondHalf = reverse(secondHalf);
+        ListNode slow = head, fast = head;
         
-        while(secondHalf != null) {
-            if(head.val != secondHalf.val) return false;
-            head = head.next;
-            secondHalf = secondHalf.next;
+        while(fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        ListNode secondHalfReversed = reverse(slow);
+        
+        ListNode curr = head;
+        while(curr != null && secondHalfReversed != null) {
+            if(curr.val != secondHalfReversed.val) return false;
+            curr = curr.next;
+            secondHalfReversed = secondHalfReversed.next;
         }
         
         return true;
@@ -42,32 +42,14 @@ class Solution {
     private ListNode reverse(ListNode head) {
         if(head == null || head.next == null) return head;
         
-        ListNode dummy = new ListNode(-1);
-        dummy.next = head;
-        
-        ListNode prev = head, current = head.next;
-        
-        while(current != null) {
-            ListNode toMoveFront = current;
-            
-            prev.next = current.next;
-            current = current.next;
-            
-            toMoveFront.next = dummy.next;
-            dummy.next = toMoveFront;
+        ListNode prev = null, curr = head;
+        while(curr != null) {
+            ListNode next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
         }
         
-        return dummy.next;
-    }
-    
-    private int calcLen(ListNode head) {
-        int len = 0;
-        
-        while(head != null) {
-            len++;
-            head = head.next;
-        }
-        
-        return len;
+        return prev;
     }
 }
